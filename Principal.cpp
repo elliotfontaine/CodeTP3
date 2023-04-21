@@ -15,9 +15,38 @@
 using namespace std;
 using namespace TP3;
 
+// Affiche un choix de mots à l'utilisateur parmi ceux d'un vecteur,
+// et retourne l'index du mot choisi, ou 0 si l'entrée est invalide.
+size_t afficheListeChoix(const vector<string> &listeChoix)
+{
+	string reponse;
+	size_t idx = 0;
+	for (vector<string>::const_iterator j = listeChoix.begin(); j != listeChoix.end(); j++)
+	{
+		idx++;
+		cout << idx << ". "<< *j << endl;
+	}
+	cout << "Votre choix : ";
+	getline(cin, reponse);
+	int choix = -1;
+	try {
+		choix = stoi(reponse);
+	} catch (invalid_argument&) {
+		// La réponse n'est pas un nombre valide
+	} catch (out_of_range&) {
+		// La réponse est hors de portée pour le type int
+	}
+	if (choix < 1 || choix > listeChoix.size())
+	{
+		cout << "Choix invalide. Celui par défaut (1.) sera pris." << endl;
+		return 0;
+	}
+	else return choix - 1;
+}
+
 int main()
 {
-
+	
 	try
 	{
 
@@ -39,7 +68,7 @@ int main()
 			else {
 				cout << "Fichier '" << reponse << "' introuvable! Veuillez entrer un nom de fichier, ou son chemin absolu." << endl;
 				cin.clear();
-				cin.ignore();
+				// cin.ignore(); // sur MacOS cette ligne empeche de lire le 1e caractere pour le 2e essai ?!
 			}
 		}
 
@@ -49,7 +78,13 @@ int main()
 
 
 	    // Affichage du dictionnaire niveau par niveau
+		// Et vérification de l'équilibre de l'arbre
+		// Et affichage du nombre de mots
 	    cout << dictEnFr << endl;
+		bool eq = dictEnFr.estEquilibre();
+		cout << "Arbre équilibré : " << (eq ? "Oui" : "Non") << endl;
+		cout << "Nombre de mots : " << dictEnFr.taille() << endl;
+		cout << endl;
 
 		vector<string> motsAnglais; //Vecteur qui contiendra les mots anglais de la phrase entrée
 
@@ -68,18 +103,63 @@ int main()
 
 		vector<string> motsFrancais; //Vecteur qui contiendra les mots traduits en français
 
-		for (vector<string>::const_iterator i = motsAnglais.begin(); i != motsAnglais.end(); i++)
+		for (vector<string>::iterator i = motsAnglais.begin(); i != motsAnglais.end(); i++)
 			// Itération dans les mots anglais de la phrase donnée
+			// CHOIX ETUDIANT: j'ai changé le const_iterator en iterator pour pouvoir modifier le vecteur
+			// de mots anglais en cas de correction de mot
 		{
 			// À compléter ...
+			// _________________________________
+			// CODE ETUDIANT
+			// _________________________________
+			
+			vector<string> traductions = dictEnFr.traduit(*i);
+			
+			if (traductions.size() == 0) 
+			{
+				// On commence par essayer de ramener le mot à l'un de ceux du dictionnaire
+				vector<string> suggestions = dictEnFr.suggereCorrections(*i);
+				if (suggestions.size() == 0)
+				{
+					// Le mot n'existe pas dans le dictionnaire, et aucune suggestion n'a été trouvée
+					cout << "Le mot '" << *i << "' n'existe pas dans le dictionnaire. Veuillez entrer manuellement un mot de remplacement (ENTER pour ignorer):" << endl;
+					cout << "Votre choix : ";
+					getline(cin, reponse);
+					motsFrancais.push_back(reponse);
+				}
+				else
+				{
+					// Le mot n'existe pas dans le dictionnaire, mais des suggestions ont été trouvées
+					cout << "Le mot '" << *i << "' n'existe pas dans le dictionnaire. Veuillez choisir une des suggestions suivantes :" << endl;
+					size_t choix = afficheListeChoix(suggestions);
+					*i = suggestions[choix];
+					traductions = dictEnFr.traduit(*i);
+				}
+			}
+
+			if (traductions.size() == 1)
+			{
+				// Cas trivial, une seule traduction possible
+				motsFrancais.push_back(traductions[0]);
+			}
+			else if (traductions.size() > 1)
+			{
+				// Plusieurs traductions possibles
+				cout << "Plusieurs traductions sont possibles pour le mot '" << *i << "'. Veuillez en choisir une parmi les suivantes: " << endl;
+				size_t choix = afficheListeChoix(traductions);
+				motsFrancais.push_back(traductions[choix]);
+			}
 		}
+		// _________________________________
+		//  FIN CODE ETUDIANT
+		// _________________________________
 
 		stringstream phraseFrancais; // On crée un string contenant la phrase,
 									 // À partir du vecteur de mots traduits.
 		for (vector<string>::const_iterator i = motsFrancais.begin(); i != motsFrancais.end(); i++)
 		{
 			phraseFrancais << *i << " ";
-		}
+		} 
 
 		cout << "La phrase en francais est :" << endl << phraseFrancais.str() << endl;
 
@@ -88,6 +168,6 @@ int main()
 	{
 		cerr << e.what() << endl;
 	}
-
+ 
 	return 0;
 }

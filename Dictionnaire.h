@@ -48,7 +48,7 @@ public:
 	//Ici, 1 représente le fait que les 2 mots sont identiques, 0 représente le fait que les 2 mots sont complètements différents
 	//On retourne une valeur entre 0 et 1 quantifiant la similarité entre les 2 mots donnés
 	//Vous pouvez utiliser par exemple la distance de Levenshtein, mais ce n'est pas obligatoire !
-	double similitude(const std ::string& mot1, const std ::string& mot2);
+	double similitude(const std::string& mot1, const std::string& mot2);
 
 
 	//Suggère des corrections pour le mot motMalEcrit sous forme d'une liste de mots, dans un vector, à partir du dictionnaire
@@ -67,6 +67,12 @@ public:
 
 	//Vérifier si le dictionnaire est vide
 	bool estVide() const;
+
+	//Retourner le nombre de mots dans le dictionnaire
+	unsigned int taille() const;
+
+	//Vérifier si l'arbre AVL sous-jacent est équilibré
+	bool estEquilibre() const;
 
 	//Affiche à l'écran l'arbre niveau par niveau de façon à voir si l'arbre est bien balancé.
 	//Ne touchez pas s.v.p. à cette méthode !
@@ -130,13 +136,49 @@ private:
 	    int hauteur;				// La hauteur de ce noeud (afin de maintenir l'équilibre de l'arbre AVL)
 
 		// Vous pouvez ajouter ici un contructeur de NoeudDictionnaire
+		NoeudDictionnaire(const std::string &mot, const std::string &traduction)
+		{
+			this->mot = mot;
+			this->traductions.push_back(traduction);
+			this->gauche = 0;
+			this->droite = 0;
+			this->hauteur = 0;
+		}
 	};
     
 	NoeudDictionnaire * racine;		// La racine de l'arbre des mots
     
 	int cpt;				// Le nombre de mots dans le dictionnaire
-
+	
 	//Vous pouvez ajouter autant de méthodes privées que vous voulez
+	
+	// Méthode auxiliaire pour détruire le dictionnaire
+	void _detruireDictionnaire(NoeudDictionnaire * &arbre);
+
+	// Méthodes auxiliaires pour ajouter un mot et sa traduction au dictionnaire
+	bool _ajouteMot(NoeudDictionnaire * &arbre, const std::string &motOriginal, const std::string &motTraduit);
+	bool _traductionEstPresente(NoeudDictionnaire * &noeud, const std::string &motTraduit) const;
+	
+	// Méthodes auxiliaires pour supprimer un mot du dictionnaire
+	void _supprimeMot(NoeudDictionnaire * &arbre, const std::string &motOriginal);
+	void _enleveMinDroite(NoeudDictionnaire * &arbre);
+	
+	// Méthode auxiliaire pour accéder à un mot. Sert à savoir si un mot est présent dans le dictionnaire
+	// Et à trouver les traductions d'un mot
+	NoeudDictionnaire* _accedeMot(NoeudDictionnaire * &arbre, const std::string &data) const;
+
+	void _suggereCorrections(NoeudDictionnaire* const &arbre, const std::string &motMalEcrit, std::vector<std::string> &suggestions);
+
+	int _hauteur(NoeudDictionnaire * &arbre) const;
+	bool _estEquilibre(NoeudDictionnaire * const &arbre) const;
+
+	// Méthodes auxiliaires pour équilibrer l'arbre AVL. TRÈS INSPIRÉES DE L'EXEMPLE DU COURS
+	void _equilibreAVL(NoeudDictionnaire * &arbre);
+	void _zigZigGauche(NoeudDictionnaire * &arbre);
+	void _zigZigDroit(NoeudDictionnaire * &arbre);
+	void _zigZagGauche(NoeudDictionnaire * &arbre);
+	void _zigZagDroit(NoeudDictionnaire * &arbre);
+
 };
     
 }
