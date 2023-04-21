@@ -8,6 +8,7 @@
  */
 
 #include "Dictionnaire.h"
+#include <algorithm> // pour std::min() dans le calcul de distance
 
 // Limite du nombre de suggestions
 #define LIMITE_SUGGESTIONS 5
@@ -374,7 +375,7 @@ namespace TP3
     {
         if (arbre == nullptr) return;
         _suggereCorrections(arbre->gauche, motMalEcrit, suggestions);
-        if (similitude(motMalEcrit, arbre->mot) >= 0.5) suggestions.push_back(arbre->mot);
+        if (similitude(motMalEcrit, arbre->mot) >= 0.6) suggestions.push_back(arbre->mot);
         _suggereCorrections(arbre->droite, motMalEcrit, suggestions);
         /* if (similitude(motMalEcrit, arbre->mot) >= 0.5)
         {
