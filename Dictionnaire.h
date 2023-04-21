@@ -152,28 +152,33 @@ private:
 	
 	//Vous pouvez ajouter autant de méthodes privées que vous voulez
 	
-	// Méthode auxiliaire pour détruire le dictionnaire
+	// Méthode auxiliaire au destructeur pour détruire le dictionnaire
 	void _detruireDictionnaire(NoeudDictionnaire * &arbre);
 
-	// Méthodes auxiliaires pour ajouter un mot et sa traduction au dictionnaire
+	// Méthodes auxiliaires à ajouteMot pour ajouter un mot et sa traduction au dictionnaire
 	bool _ajouteMot(NoeudDictionnaire * &arbre, const std::string &motOriginal, const std::string &motTraduit);
 	bool _traductionEstPresente(NoeudDictionnaire * &noeud, const std::string &motTraduit) const;
 	
-	// Méthodes auxiliaires pour supprimer un mot du dictionnaire
+	// Méthodes auxiliaires à supprimeMot pour supprimer un mot du dictionnaire
 	void _supprimeMot(NoeudDictionnaire * &arbre, const std::string &motOriginal);
 	void _enleveMinDroite(NoeudDictionnaire * &arbre);
 	
-	// Méthode auxiliaire pour accéder à un mot. Sert à savoir si un mot est présent dans le dictionnaire
+	// Méthode privée pour accéder à un mot. Est utilisée pour savoir si un mot est présent dans le dictionnaire
 	// Et à trouver les traductions d'un mot
 	NoeudDictionnaire* _accedeMot(NoeudDictionnaire * &arbre, const std::string &data) const;
 
+	// Méthode auxiliaire de suggereCorrections
 	void _suggereCorrections(NoeudDictionnaire* const &arbre, const std::string &motMalEcrit, std::vector<std::string> &suggestions);
 
+	// Méthode privée pour calculer la hauteur d'un noeud
 	int _hauteur(NoeudDictionnaire * &arbre) const;
+
+	// Méthode auxiliaire de estEquilibre pour calculer le facteur d'équilibre d'un noeud
 	bool _estEquilibre(NoeudDictionnaire * const &arbre) const;
 
-	// Méthodes auxiliaires pour équilibrer l'arbre AVL. TRÈS INSPIRÉES DE L'EXEMPLE DU COURS
+	// Méthode privée pour équilibrer l'arbre AVL. TRÈS INSPIRÉES DE L'EXEMPLE DU COURS
 	void _equilibreAVL(NoeudDictionnaire * &arbre);
+	// Méthodes auxiliaires à _equilibreAVL
 	void _zigZigGauche(NoeudDictionnaire * &arbre);
 	void _zigZigDroit(NoeudDictionnaire * &arbre);
 	void _zigZagGauche(NoeudDictionnaire * &arbre);

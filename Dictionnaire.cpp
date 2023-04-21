@@ -217,16 +217,31 @@ namespace TP3
         return _accedeMot(racine, mot) != nullptr;
     }
 
+    /**
+     * \fn bool Dictionnaire::estVide() const
+     * \brief Vérifie si le dictionnaire est vide
+     * \return true si le dictionnaire est vide, false sinon
+     */
     bool Dictionnaire::estVide() const
     {
 	    return this->cpt == 0;
     }
 
+    /**
+     * \fn unsigned int Dictionnaire::taille() const
+     * \brief Retourne le nombre de mots dans le dictionnaire
+     * \return Le nombre de mots dans le dictionnaire
+     */
     unsigned int Dictionnaire::taille() const
     {
         return this->cpt;
     }
 
+    /**
+     * \fn bool Dictionnaire::estEquilibre() const
+     * \brief Vérifie si le dictionnaire est équilibré
+     * \return true si le dictionnaire est équilibré, false sinon
+     */
     bool Dictionnaire::estEquilibre() const
     {
         return _estEquilibre(this->racine);
@@ -234,7 +249,12 @@ namespace TP3
 
 	// Complétez ici l'implémentation avec vos méthodes privées.
     
-    // Méthode auxiliaire pour détruire le dictionnaire
+    /**
+     * \fn void Dictionnaire::_detruireDictionnaire(NoeudDictionnaire * &arbre)
+     * \brief Méthode auxiliaire au destructeur pour détruire récursivement le dictionnaire
+     * \param[in] arbre Le sous-arbre à détruire récursivement
+     * \post Le noeud et ses sous-arbres sont détruits
+     */
     void Dictionnaire::_detruireDictionnaire(NoeudDictionnaire * &arbre)
     {
         if (arbre != nullptr)
@@ -246,7 +266,14 @@ namespace TP3
         }
     }
 
-    // Méthode auxiliaire pour ajouter un mot au dictionnaire
+    /**
+     * \fn bool Dictionnaire::_ajouteMot(NoeudDictionnaire * &arbre, const std::string &motOriginal, const std::string &motTraduit)
+     * \brief Méthode auxiliaire à ajouteMot pour ajouter un mot au dictionnaire par récursivité
+     * \param[in] arbre Le noeud à ajouter
+     * \param[in] motOriginal Le mot original à ajouter
+     * \param[in] motTraduit Le mot traduit à ajouter
+     * \return true si un nouveau mot a été ajouté, false sinon
+     */
     bool Dictionnaire::_ajouteMot(NoeudDictionnaire * &arbre, const std::string &motOriginal, const std::string &motTraduit)
     {   
         // Indique si un mot, et pas seulement une traduction, a été ajouté
@@ -279,7 +306,14 @@ namespace TP3
         return nvMotEstAjoute;
     }
 
-    // Méthode auxiliaire pour savoir si un Noeud contient une traduction en particulier pour le mot
+    /**
+     * \fn bool Dictionnaire::_traductionEstPresente(NoeudDictionnaire * &noeud, const std::string &motTraduit) const
+     * \brief Méthode auxiliaire à ajouteMot pour savoir si un mot a déjà une traduction donnée
+     * \param[in] noeud Le noeud à vérifier
+     * \param[in] motTraduit Le mot traduit à vérifier
+     * \return true si le mot a déjà la traduction donnée, false sinon
+     * \pre Le noeud existe
+     */
     bool Dictionnaire::_traductionEstPresente(NoeudDictionnaire * &noeud, const std::string &motTraduit) const
     {   
         if (noeud == nullptr) throw std::logic_error("Le noeud n'existe pas");
@@ -293,7 +327,17 @@ namespace TP3
         }
     }
 
-    // Méthodes auxiliaires (_supprimeMot & _enleveMinDroite) pour supprimer un mot du dictionnaire
+    /**
+     * \fn void Dictionnaire::_supprimeMot(NoeudDictionnaire * &arbre, const std::string &motOriginal)
+     * \brief Méthode auxiliaire à supprimeMot pour supprimer un mot du dictionnaire par récursivité
+     * \param[in] arbre Le sous-arbre dans lequel chercher le mot
+     * \param[in] motOriginal Le mot original à supprimer
+     * \pre Le dictionnaire n'est pas vide
+     * \pre Le mot existe dans le dictionnaire
+     * \post Le mot est supprimé du dictionnaire
+     * \exception logic_error Le dictionnaire est vide
+     * \exception logic_error Le mot n'existe pas dans le dictionnaire
+     */
     void Dictionnaire::_supprimeMot(NoeudDictionnaire * &arbre, const std::string &motOriginal)
     {
         if (estVide())
@@ -327,7 +371,13 @@ namespace TP3
         _equilibreAVL(arbre);
     }
 
-    // Méthodes auxiliaires (_supprimeMot & _enleveMinDroite) pour supprimer un mot du dictionnaire
+    /**
+     * \fn void Dictionnaire::_enleveMinDroite(NoeudDictionnaire * &arbre)
+     * \brief Méthode auxiliaire à supprimeMot pour supprimer un mot ayant deux enfants
+     * \param[in] arbre Le noeud à supprimer
+     * \pre Le noeud a deux enfants
+     * \post Le noeud est supprimé du dictionnaire et remplacé par le plus petit mot de l'arbre droit
+     */
     void Dictionnaire::_enleveMinDroite(NoeudDictionnaire * &arbre)
     {
         NoeudDictionnaire *temp = arbre->droite;
@@ -344,7 +394,13 @@ namespace TP3
         else _supprimeMot(parent->droite, temp->mot);
     }
 
-    // Méthode auxiliaire pour savoir si un mot appartient au dictionnaire
+    /**
+     * \fn void Dictionnaire::_accedeMot(NoeudDictionnaire * &arbre, const std::string &data) const
+     * \brief Méthode privée pour accéder à un mot. Est utilisée pour savoir si un mot est présent dans le dictionnaire
+     * \param[in] arbre Le sous-arbre dans lequel chercher le mot
+     * \param[in] data Le mot à chercher
+     * \return Le noeud contenant le mot, nullptr si le mot n'est pas présent
+     */
     Dictionnaire::NoeudDictionnaire* Dictionnaire::_accedeMot(NoeudDictionnaire * &arbre, const std::string &data) const
     {
         if (arbre == nullptr)
@@ -370,6 +426,13 @@ namespace TP3
         }
     }
 
+    /**
+     * \fn void Dictionnaire::_suggereCorrections(NoeudDictionnaire* const &arbre, const std::string &motMalEcrit, std::vector<std::string> &suggestions)
+     * \brief Méthode auxiliaire de suggereCorrections pour chercher récursivement les mots similaires. Prend un vecteur de suggestions par référence pour le remplir
+     * \param[in] arbre Le sous-arbre dans lequel chercher les mots
+     * \param[in] motMalEcrit Le mot mal écrit
+     * \param[in] suggestions Le vecteur de suggestions
+     */
     void Dictionnaire::_suggereCorrections(NoeudDictionnaire* const &arbre, const std::string &motMalEcrit, std::vector<std::string> &suggestions)
     {
         if (arbre == nullptr) return;
@@ -384,11 +447,23 @@ namespace TP3
         } */
     }
 
+    /**
+     * \fn void Dictionnaire::_hauteur(NoeudDictionnaire * &arbre) const
+     * \brief Méthode privée pour calculer la hauteur d'un sous-arbre
+     * \param[in] arbre Le sous-arbre
+     * \return La hauteur du sous-arbre (ou -1 si le sous-arbre est vide)
+     */
     int Dictionnaire::_hauteur(NoeudDictionnaire * &arbre) const
     {
         return (arbre == nullptr) ? -1 : arbre->hauteur; // la hauteur du vide = -1
     }
 
+    /**
+     * \fn void Dictionnaire::_estEquilibre(NoeudDictionnaire* const &arbre) const
+     * \brief Méthode récursive auxiliaire à estEquilibre pour savoir si un sous-arbre est équilibré
+     * \param[in] arbre Le sous-arbre
+     * \return true si le sous-arbre est équilibré, false sinon
+     */
     bool Dictionnaire::_estEquilibre(NoeudDictionnaire* const &arbre) const
     {
         // https://www.geeksforgeeks.org/how-to-determine-if-a-binary-tree-is-balanced/
@@ -415,6 +490,12 @@ namespace TP3
         return false;
     }
 
+    /**
+     * \fn void Dictionnaire::_equilibreAVL(NoeudDictionnaire * &arbre)
+     * \brief Méthode privée pour équilibrer un sous-arbre et mettre à jour sa hauteur. Utilisé lors de la remontée par les méthodes récursives
+     * \param[in] arbre Le sous-arbre à équilibrer
+     * \post Le sous-arbre est équilibré
+     */
     void Dictionnaire::_equilibreAVL(NoeudDictionnaire * &arbre)
     {
         if (arbre == nullptr) return;
@@ -452,6 +533,13 @@ namespace TP3
         }
     }
 
+    /**
+     * \fn void Dictionnaire::_zigZigGauche(NoeudDictionnaire * &K2)
+     * \brief Méthode auxiliaire à _equilibreAVL pour équilibrer un sous-arbre en zigZig à gauche et mettre à jour les hauteurs.
+     * \param[in] K2 Le sous-arbre à équilibrer
+     * \pre Le sous-arbre est en zigZig à gauche
+     * \post Une rotation à droite est effectuée et les hauteurs sont mises à jour
+     */
     void Dictionnaire::_zigZigGauche(NoeudDictionnaire * &K2)
     {
         NoeudDictionnaire *K1 = K2->gauche;
@@ -467,6 +555,13 @@ namespace TP3
         //std::cout << "fin zigZigGauche: hauteur " << K1->mot << "=" << K1->hauteur << " hauteur " << K1->droite->mot << "=" << K1->droite->hauteur << std::endl;
     }
 
+    /**
+     * \fn void Dictionnaire::_zigZigDroit(NoeudDictionnaire * &K2)
+     * \brief Méthode auxiliaire à _equilibreAVL pour équilibrer un sous-arbre en zigZig à droite et mettre à jour les hauteurs.
+     * \param[in] K2 Le sous-arbre à équilibrer
+     * \pre Le sous-arbre est en zigZig à droite
+     * \post Une rotation à gauche est effectuée et les hauteurs sont mises à jour
+     */
     void Dictionnaire::_zigZigDroit(NoeudDictionnaire * &K2)
     {
         NoeudDictionnaire *K1 = K2->droite;
@@ -482,12 +577,26 @@ namespace TP3
         //std::cout << "fin zigZigDroit: hauteur " << K1->mot << "=" << K1->hauteur << " hauteur " << K1->gauche->mot << "=" << K1->gauche->hauteur << std::endl;
     }
 
+    /**
+     * \fn void Dictionnaire::_zigZagGauche(NoeudDictionnaire * &K3)
+     * \brief Méthode auxiliaire à _equilibreAVL pour équilibrer un sous-arbre en zigZag à gauche et mettre à jour les hauteurs.
+     * \param[in] K3 Le sous-arbre à équilibrer
+     * \pre Le sous-arbre est en zigZag à gauche
+     * \post Le sous-arbre est équilibré et ses hauteurs sont mises à jour
+     */
     void Dictionnaire::_zigZagGauche(NoeudDictionnaire * &K3)
     {
         _zigZigDroit(K3->gauche);
         _zigZigGauche(K3);
     }
 
+    /**
+     * \fn void Dictionnaire::_zigZagDroit(NoeudDictionnaire * &K3)
+     * \brief Méthode auxiliaire à _equilibreAVL pour équilibrer un sous-arbre en zigZag à droite et mettre à jour les hauteurs.
+     * \param[in] K3 Le sous-arbre à équilibrer
+     * \pre Le sous-arbre est en zigZag à droite
+     * \post Le sous-arbre est équilibré et ses hauteurs sont mises à jour
+     */
     void Dictionnaire::_zigZagDroit(NoeudDictionnaire * &K3)
     {
         _zigZigGauche(K3->droite);

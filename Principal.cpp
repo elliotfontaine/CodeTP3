@@ -15,8 +15,13 @@
 using namespace std;
 using namespace TP3;
 
-// Affiche un choix de mots à l'utilisateur parmi ceux d'un vecteur,
-// et retourne l'index du mot choisi, ou 0 si l'entrée est invalide.
+
+/**
+ * \brief Affiche un choix de mots à l'utilisateur parmi ceux d'un vecteur,
+ * et retourne l'index du mot choisi, ou 0 si l'entrée est invalide.
+ * \param[in] listeChoix Le vecteur de mots à afficher
+ * \return L'index du mot choisi, ou 0 si l'entrée est invalide.
+ */
 size_t afficheListeChoix(const vector<string> &listeChoix)
 {
 	string reponse;
@@ -44,6 +49,10 @@ size_t afficheListeChoix(const vector<string> &listeChoix)
 	else return choix - 1;
 }
 
+/**
+ * \brief Fonction principale du programme. Charge le dictionnaire et permet à l'utilisateur de traduire une phrase.
+ * \return 0 si le programme s'est terminé normalement, 1 sinon.
+ */
 int main()
 {
 	
